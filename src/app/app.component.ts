@@ -1,10 +1,28 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/internal/Observable';
+import { tap } from 'rxjs/internal/operators/tap';
+import { IProduct } from './models/product';
+import { ProductService } from './services/product.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'first-angular-project';
+export class AppComponent implements OnInit {
+  title = 'Angular app';
+  // products: IProduct[] = [];
+  loading = false;
+  products$: Observable<IProduct[]>;
+
+  constructor(private productsService: ProductService) {}
+  ngOnInit(): void {
+    this.loading = true;
+    this.products$ = this.productsService
+      .getAll()
+      .pipe(tap(() => (this.loading = false)));
+    // this.productsService.getAll().subscribe((products) => {
+    //   this.products = products;
+    //   this.loading = false;
+    // });
+  }
 }
